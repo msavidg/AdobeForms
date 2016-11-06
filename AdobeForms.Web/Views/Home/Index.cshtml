@@ -1,0 +1,13 @@
+﻿<script type="text/javascript">
+    function SayHello() {
+        $("#result").load("http://localhost/AdobeForms.Web/api/AdobeForm/GetForm?adobeFormName=XXX");
+    }
+</script>
+
+<div class="jumbotron">
+    <h1>AdobeForms.Web</h1>
+    <p class="lead">Load dynamic input data for forms with user fill-ins.</p>
+    <p><a href="javascript:SayHello()" class="btn btn-primary btn-lg">Say Hello &raquo;</a></p>
+</div>
+<div class="row" id="result">
+</div>
