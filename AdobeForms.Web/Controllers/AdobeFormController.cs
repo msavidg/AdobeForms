@@ -21,11 +21,19 @@ namespace AdobeForms.Web.Controllers
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.AppendLine($"<h2>{DateTime.Now.ToString("o")}</h2>");
-
             XDPProcessor xdpProcessor = new XDPProcessor();
 
             XElement customFormDataElement = xdpProcessor.GetXDPCustomFormData("CustomFormData", adobeFormName);
+
+            var leafs = customFormDataElement.Descendants().Where(desc => !desc.Elements().Any());
+
+            foreach (var x in leafs)
+            {
+                stringBuilder.AppendLine("<div class=\"input-group input-group-lg\">");
+                stringBuilder.AppendLine($"    <span class=\"input - group - addon\" id=\"basic - addon1\">{x.Attribute("name").Value}</span>");
+                stringBuilder.AppendLine($"    <input type=\"text\" class=\"form-control\" placeholder=\"{x.Attribute("name").Value}\" aria-describedby=\"basic-addon1\">");
+                stringBuilder.AppendLine("</div>");
+            }
 
             return new HttpResponseMessage()
             {

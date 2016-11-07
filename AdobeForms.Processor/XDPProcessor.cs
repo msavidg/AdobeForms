@@ -56,7 +56,10 @@ namespace AdobeForms.Processor
             }
 
             return customFormDataElement;
+
         }
+
+        #region Helpers
 
         //http://stackoverflow.com/questions/508390/create-xml-nodes-based-on-xpath
 
@@ -87,6 +90,8 @@ namespace AdobeForms.Processor
 
             return MakeXPath(node, rest);
         }
+
+        #endregion
 
     }
 }
