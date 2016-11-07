@@ -23,11 +23,9 @@ namespace AdobeForms.Web.Controllers
 
             stringBuilder.AppendLine($"<h2>{DateTime.Now.ToString("o")}</h2>");
 
-            AdobeForms.Processor.XDPProcessor xdpProcessor = new XDPProcessor();
+            XDPProcessor xdpProcessor = new XDPProcessor();
 
-            string s = HttpContext.Current.Server.MapPath(adobeFormName);
-
-            XElement customFormDataElement = xdpProcessor.GetXDPCustomFormData(adobeFormName);
+            XElement customFormDataElement = xdpProcessor.GetXDPCustomFormData("CustomFormData", adobeFormName);
 
             return new HttpResponseMessage()
             {

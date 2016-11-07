@@ -2,7 +2,7 @@
     function LoadDynamicInputData(s) {
         $("#result")
             .load("http://localhost/AdobeForms.Web/api/AdobeForm/GetForm", "adobeFormName="+s.toString() , function (response, status, xhr) {
-                if (status == "error") {
+                if (status === "error") {
                     var msg = "Sorry but there was an error: ";
                     $("#error").html(msg + xhr.status + " " + xhr.statusText);
                 }
@@ -13,7 +13,7 @@
 <div class="jumbotron">
     <h1>AdobeForms.Web</h1>
     <p class="lead">Load dynamic input data for forms with user fill-ins.</p>
-    <p><a href="javascript:LoadDynamicInputData('NAV-RXS-363-TX (10 15).xdp')" class="btn btn-primary btn-lg">Load Dynamic Input Data &raquo;</a></p>
+    <p><a href="javascript:LoadDynamicInputData('c:\\dev\\FormsLibrary\\EXC\\Documents\\NAV-RXS-363-TX (10 15).xdp')" class="btn btn-primary btn-lg">Load Dynamic Input Data &raquo;</a></p>
 </div>
 <div class="panel panel-default">
     <div id="result"></div>
