@@ -1,7 +1,14 @@
-﻿<script type="text/javascript">
-    function LoadDynamicInputData(s) {
+﻿@model AdobeForms.Web.Models.IndexViewModel
+
+<script type="text/javascript">
+    function LoadDynamicInputData() {
+
+        var selectedText = $('#baseFormIdString').find("option:selected").attr("id");
+
+        selectedText = "c:\\dev\\navigate\\forms\\exc\\documents\\" + selectedText;
+
         $("#result")
-            .load("http://localhost/AdobeForms.Web/api/AdobeForm/GetForm", "adobeFormName="+s.toString() , function (response, status, xhr) {
+            .load("http://localhost/AdobeForms.Web/api/AdobeForm/GetForm", "adobeFormName=" + selectedText.toString(), function (response, status, xhr) {
                 if (status === "error") {
                     var msg = "Sorry but there was an error: ";
                     $("#error").html(msg + xhr.status + " " + xhr.statusText);
@@ -12,8 +19,21 @@
 
 <div class="jumbotron">
     <h1>AdobeForms.Web</h1>
+    <br />
     <p class="lead">Load dynamic input data for forms with user fill-ins.</p>
-    <p><a href="javascript:LoadDynamicInputData('c:\\dev\\FormsLibrary\\EXC\\Documents\\NAV-RXS-363-TX (10 15).xdp')" class="btn btn-primary btn-lg">Load Dynamic Input Data &raquo;</a></p>
+    <br />
+    <div class="form-group form-group-lg">
+        <label for=""></label>
+        <select class="form-control" id="baseFormIdString">
+            @foreach (var form in Model.Forms)
+            {
+                <option id="@form.AdobeId">@form.FormIdString</option>
+            }
+        </select>
+    </div>
+    <br />
+    <p><a href="javascript:LoadDynamicInputData()" class="btn btn-primary btn-lg">Load Dynamic Input Data &raquo;</a></p>
+    <br />
 </div>
 <div class="panel panel-default">
     <div id="result"></div>

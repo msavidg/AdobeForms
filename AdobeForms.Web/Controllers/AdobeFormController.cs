@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,6 +12,8 @@ using System.Web.Http;
 using System.Web.UI.WebControls;
 using System.Xml.Linq;
 using AdobeForms.Processor;
+using AdobeForms.Web.DataTypes;
+using Microsoft.Ajax.Utilities;
 
 namespace AdobeForms.Web.Controllers
 {
@@ -29,11 +32,13 @@ namespace AdobeForms.Web.Controllers
 
             foreach (var x in leafs)
             {
-                stringBuilder.AppendLine("<div class=\"input-group input-group-lg\">");
-                stringBuilder.AppendLine($"    <span class=\"input - group - addon\" id=\"basic - addon1\">{x.Attribute("name").Value}</span>");
-                stringBuilder.AppendLine($"    <input type=\"text\" class=\"form-control\" placeholder=\"{x.Attribute("name").Value}\" aria-describedby=\"basic-addon1\">");
-                stringBuilder.AppendLine("</div>");
+                stringBuilder.AppendLine("<br />");
+                stringBuilder.AppendLine("  <div class=\"input-group input-group-lg\">");
+                stringBuilder.AppendLine($"    <span class=\"input-group-addon\" id=\"{x.Name.LocalName}\">{x.Attribute("name").Value}</span>");
+                stringBuilder.AppendLine($"    <input type=\"{GetUIType(x.Attribute("datatype").Value)}\" class=\"form-control\" aria-describedby=\"{x.Name.LocalName}\" title=\"XML Element Name: {x.Name.LocalName}\">");
+                stringBuilder.AppendLine("  </div>");
             }
+            stringBuilder.AppendLine("<br />");
 
             return new HttpResponseMessage()
             {
@@ -42,10 +47,57 @@ namespace AdobeForms.Web.Controllers
                 {
                     Headers =
                     {
-                        ContentType =  new MediaTypeHeaderValue( MediaTypeNames.Text.Html.ToString())
+                        ContentType =  new MediaTypeHeaderValue( MediaTypeNames.Text.Html )
                     }
                 }
             };
         }
+
+        private string GetUIType(string elementType)
+        {
+            string uiType = "text";
+
+            switch (elementType)
+            {
+
+                case "barcode":
+                    uiType = "text";
+                    break;
+                case "button":
+                    uiType = "button";
+                    break;
+                case "checkButton":
+                    uiType = "checkbox";
+                    break;
+                case "choiceList":
+                    uiType = "text";
+                    break;
+                case "dateTimeEdit":
+                    uiType = "date";
+                    break;
+                case "defaultUi":
+                    uiType = "text";
+                    break;
+                case "imageEdit":
+                    uiType = "image";
+                    break;
+                case "numericEdit":
+                    uiType = "number";
+                    break;
+                case "passwordEdit":
+                    uiType = "password";
+                    break;
+                case "signature":
+                    uiType = "text";
+                    break;
+                case "textEdit":
+                    uiType = "text";
+                    break;
+
+            }
+
+            return uiType;
+        }
+
     }
 }

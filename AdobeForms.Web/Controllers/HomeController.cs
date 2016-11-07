@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using AdobeForms.Web.Models;
 
 namespace AdobeForms.Web.Controllers
 {
@@ -12,7 +13,9 @@ namespace AdobeForms.Web.Controllers
         {
             ViewBag.Title = "Home Page";
 
-            return View();
+            IndexViewModel indexViewModel = new IndexViewModel();
+
+            return View(indexViewModel);
         }
     }
 }

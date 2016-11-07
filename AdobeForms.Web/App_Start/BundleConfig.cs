@@ -18,11 +18,14 @@ namespace AdobeForms.Web
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
+                      "~/Content/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js",
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css",
                       "~/Content/site.css"));
+
         }
     }
 }
