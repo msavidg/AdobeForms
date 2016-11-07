@@ -38,11 +38,7 @@ namespace AdobeForms.Processor
                     int i = Array.IndexOf(tokens, customFormData);
 
                     // Create a destination array
-                    //string[] elements = new string[tokens.Length - (i + 1)];
                     string[] elements = tokens.Skip(i + 1).ToArray();
-
-                    // Copy all of the elements in the bind path that come after CustomFormData or FormFillInData
-                    //Array.Copy(tokens, i + 1, elements, 0, tokens.Length - (i + 1));
 
                     // Create the XML from the reconstructed path
                     MakeXPath(customFormDataElement, String.Join("/", (String[])elements));
