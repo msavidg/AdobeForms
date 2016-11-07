@@ -1,5 +1,7 @@
 ﻿@model AdobeForms.Web.Models.IndexViewModel
 
+<script src="~/Scripts/adobeforms.js"></script>
+
 <script type="text/javascript">
     function LoadDynamicInputData() {
 
@@ -14,6 +16,22 @@
                     $("#error").html(msg + xhr.status + " " + xhr.statusText);
                 }
             });
+    }
+
+    function SendToServer() {
+
+        var data = $("#result :input").serializeObject();
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost/AdobeForms.Web/api/AdobeForm/SaveForm",
+            //data: JSON.stringify(data),
+            data: data,
+            success: function () { alert('Sent...'); },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+
     }
 </script>
 
@@ -37,4 +55,5 @@
 </div>
 <div class="panel panel-default">
     <div id="result"></div>
+    <button type="button" class="btn btn-lg btn-primary" onclick="SendToServer()">Save</button>
 </div>

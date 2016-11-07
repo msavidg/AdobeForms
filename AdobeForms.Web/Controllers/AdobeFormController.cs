@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using AdobeForms.Processor;
 using AdobeForms.Web.DataTypes;
 using Microsoft.Ajax.Utilities;
+using Newtonsoft.Json;
 
 namespace AdobeForms.Web.Controllers
 {
@@ -34,8 +35,8 @@ namespace AdobeForms.Web.Controllers
             {
                 stringBuilder.AppendLine("<br />");
                 stringBuilder.AppendLine("  <div class=\"input-group input-group-lg\">");
-                stringBuilder.AppendLine($"    <span class=\"input-group-addon\" id=\"{x.Name.LocalName}\">{x.Attribute("name").Value}</span>");
-                stringBuilder.AppendLine($"    <input type=\"{GetUIType(x.Attribute("datatype").Value)}\" class=\"form-control\" aria-describedby=\"{x.Name.LocalName}\" title=\"XML Element Name: {x.Name.LocalName}\">");
+                stringBuilder.AppendLine($"    <span class=\"input-group-addon\" id=\"lbl{x.Name.LocalName}\">{x.Attribute("name").Value}</span>");
+                stringBuilder.AppendLine($"    <input id=\"{x.Name.LocalName}\" name=\"{x.Name.LocalName}\" type=\"{GetUIType(x.Attribute("datatype").Value)}\" class=\"form-control\" aria-describedby=\"lbl{x.Name.LocalName}\" title=\"XML Element Name: {x.Name.LocalName}\">");
                 stringBuilder.AppendLine("  </div>");
             }
             stringBuilder.AppendLine("<br />");
@@ -51,6 +52,26 @@ namespace AdobeForms.Web.Controllers
                     }
                 }
             };
+        }
+
+        [HttpPost]
+        public HttpResponseMessage SaveForm(string[][] data)
+        {
+
+            var x = this.Request.GetQueryNameValuePairs();
+
+            return new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent("")
+                {
+                    Headers =
+                    {
+                        ContentType =  new MediaTypeHeaderValue( MediaTypeNames.Text.Html )
+                    }
+                }
+            };
+
         }
 
         private string GetUIType(string elementType)
