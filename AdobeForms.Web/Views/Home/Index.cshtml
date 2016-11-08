@@ -7,7 +7,8 @@
 
         var selectedText = $('#baseFormIdString').find("option:selected").attr("id");
 
-        selectedText = "c:\\dev\\navigate\\forms\\exc\\documents\\" + selectedText;
+        //selectedText = "c:\\dev\\navigate\\forms\\exc\\documents\\" + selectedText;
+        selectedText = "c:\\dev\\formslibrary\\exc\\documents\\" + selectedText;
 
         $("#result")
             .load("http://localhost/AdobeForms.Web/api/AdobeForm/GetForm", "adobeFormName=" + selectedText.toString(), function (response, status, xhr) {
@@ -20,13 +21,15 @@
 
     function SendToServer() {
 
-        var data = $("#result :input").serializeObject();
+        var dataArray = [];
+        $.each($('#result :input').serializeArray(), function () {
+            dataArray.push({ Name: this.name, Value: this.value });
+        });
 
         $.ajax({
             type: "POST",
             url: "http://localhost/AdobeForms.Web/api/AdobeForm/SaveForm",
-            //data: JSON.stringify(data),
-            data: data,
+            data: JSON.stringify(dataArray),
             success: function () { alert('Sent...'); },
             contentType: "application/json; charset=utf-8",
             dataType: "json"
