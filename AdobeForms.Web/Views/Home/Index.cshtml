@@ -7,8 +7,8 @@
 
         var selectedText = $('#baseFormIdString').find("option:selected").attr("id");
 
-        //selectedText = "c:\\dev\\navigate\\forms\\exc\\documents\\" + selectedText;
-        selectedText = "c:\\dev\\formslibrary\\exc\\documents\\" + selectedText;
+        selectedText = "c:\\dev\\navigate\\forms\\exc\\documents\\" + selectedText;
+        //selectedText = "c:\\dev\\formslibrary\\exc\\documents\\" + selectedText;
 
         $("#result")
             .load("http://localhost/AdobeForms.Web/api/AdobeForm/GetForm", "adobeFormName=" + selectedText.toString(), function (response, status, xhr) {

@@ -55,7 +55,7 @@ namespace AdobeForms.Web.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage SaveForm(foo[] data)
+        public HttpResponseMessage SaveForm(FormValues[] data)
         {
 
             var x = this.Request.GetQueryNameValuePairs();
@@ -122,7 +122,7 @@ namespace AdobeForms.Web.Controllers
 
     }
 
-    public class foo
+    public class FormValues
     {
         public string Name { get; set; }
         public string Value { get; set; }
