@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -37,6 +35,7 @@ namespace AdobeForms.Processor
 
                     bool requiredField = false;
                     string requiredFieldMessage = String.Empty;
+                    string defaultValueText = String.Empty;
 
                     // Get the name of the containing field of the <bind> element
                     var fieldElementName = (field.Attributes().Any(a => a.Name.LocalName == "name")) ? (field.Attribute("name").Value) : ("");
@@ -58,6 +57,12 @@ namespace AdobeForms.Processor
                         {
                             requiredFieldMessage = validateMessage.Value;
                         }
+                    }
+
+                    var defaultValue = field.XPathSelectElement("ns:value/ns:text", nsManager);
+                    if (defaultValue != null)
+                    {
+                        defaultValueText = SecurityElement.Escape(defaultValue.Value);
                     }
 
                     // This will be the path in the forms XML that this control is bound to
@@ -134,6 +139,15 @@ namespace AdobeForms.Processor
 
                         #endregion
 
+                        #region Default Values
+
+                        if (!String.IsNullOrEmpty(defaultValueText))
+                        {
+                            leaf.Add(new XAttribute("default", defaultValueText));
+                        }
+
+                        #endregion
+
                     }
                 }
             }
@@ -177,4 +191,5 @@ namespace AdobeForms.Processor
         #endregion
 
     }
+
 }
