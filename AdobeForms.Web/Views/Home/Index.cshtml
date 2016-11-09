@@ -26,12 +26,12 @@
             url: "http://localhost/AdobeForms.Web/api/AdobeForm/LoadForm",
             data: $("#responseXML").text(),
             contentType: "application/xml; charset=utf-8",
-            dataType: "xml",
+            dataType: "html",
             error: function (jqXhr, textStatus, errorThrown) {
                 window.alert(textStatus);
             },
             success: function (data, textStatus, jqXhr) {
-                $("#responseXML").html(data.documentElement.outerHTML);
+                $("#result").html(data);
             },
             statusCode: {
                 200: function () {

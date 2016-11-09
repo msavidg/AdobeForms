@@ -35,13 +35,13 @@ namespace AdobeForms.Web.Controllers
 
             var leafs = customFormDataElement.Descendants().Where(desc => !desc.Elements().Any());
 
+            stringBuilder.AppendLine("<br />");
+            stringBuilder.AppendLine("  <div class=\"container\">");
             foreach (var leaf in leafs)
             {
-                stringBuilder.AppendLine("<br />");
-                stringBuilder.AppendLine("  <div class=\"input-group input-group-lg\">");
                 stringBuilder.AppendLine(FieldString(leaf));
-                stringBuilder.AppendLine("  </div>");
             }
+            stringBuilder.AppendLine("  </div>");
 
             var bytes = Convert.ToBase64String(Encoding.UTF8.GetBytes(customFormDataElement.ToString()));
 
@@ -68,13 +68,13 @@ namespace AdobeForms.Web.Controllers
 
             var leafs = customFormDataElement.Descendants().Where(desc => !desc.Elements().Any()).ToList();
 
+            stringBuilder.AppendLine("<br />");
+            stringBuilder.AppendLine("  <div class=\"container\">");
             foreach (var leaf in leafs)
             {
-                stringBuilder.AppendLine("<br />");
-                stringBuilder.AppendLine("  <div class=\"input-group input-group-lg\">");
                 stringBuilder.AppendLine(FieldString(leaf));
-                stringBuilder.AppendLine("  </div>");
             }
+            stringBuilder.AppendLine("  </div>");
 
             var bytes = Convert.ToBase64String(Encoding.UTF8.GetBytes(customFormDataElement.ToString()));
 
@@ -182,13 +182,7 @@ namespace AdobeForms.Web.Controllers
 
             //http://stackoverflow.com/questions/5796383/insert-spaces-between-words-on-a-camel-cased-token
 
-            XElement span = new XElement("span",
-                Regex.Replace(name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1"),
-                new XAttribute("style", "width: 250px;text-align: right;"),
-                new XAttribute("class", "input-group-addon"),
-                new XAttribute("id", $"lbl{e.Name.LocalName}")
-                );
-            return span.ToString();
+            return Regex.Replace(name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
         }
 
         private string FieldString(XElement e)
@@ -204,65 +198,135 @@ namespace AdobeForms.Web.Controllers
 
             switch (GetUIType(e))
             {
+                case "button":
+                    break;
 
-                #region date, number, password, and text
+                case "checkbox":
+
+                    XElement checkboxContainer = new XElement("div", new XAttribute("class", "form-group row"));
+                    XElement checkboxLabel = new XElement("label", new XAttribute("for", e.Name.LocalName), new XAttribute("class", "col-sm-2 col-form-label"), LabelString(e));
+                    XElement checkboxField = new XElement("div",
+                                                new XAttribute("class", "col-sm-10"),
+                                                    new XElement("input",
+                                                        new XAttribute("type", GetUIType(e)),
+                                                        new XAttribute("class", "form-check"),
+                                                        new XAttribute("id", e.Name.LocalName),
+                                                        new XAttribute("name", e.Name.LocalName)
+                                                    )
+                                            );
+
+                    checkboxContainer.Add(checkboxLabel);
+                    checkboxContainer.Add(checkboxField);
+
+                    htmlField = checkboxContainer.ToString();
+
+                    break;
 
                 case "date":
+
+                    XElement dateContainer = new XElement("div", new XAttribute("class", "form-group row"));
+                    XElement dateLabel = new XElement("label", new XAttribute("for", e.Name.LocalName), new XAttribute("class", "col-sm-2 col-form-label"), LabelString(e));
+                    XElement dateField = new XElement("div",
+                                                new XAttribute("class", "col-sm-10"),
+                                                    new XElement("input",
+                                                        new XAttribute("type", GetUIType(e)),
+                                                        new XAttribute("class", "form-control"),
+                                                        new XAttribute("id", e.Name.LocalName),
+                                                        new XAttribute("name", e.Name.LocalName),
+                                                        new XAttribute("value", (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText))
+                                                    )
+                                            );
+
+                    dateContainer.Add(dateLabel);
+                    dateContainer.Add(dateField);
+
+                    htmlField = dateContainer.ToString();
+
+                    break;
+
                 case "number":
+
+                    XElement numberContainer = new XElement("div", new XAttribute("class", "form-group row"));
+                    XElement numberLabel = new XElement("label", new XAttribute("for", e.Name.LocalName), new XAttribute("class", "col-sm-2 col-form-label"), LabelString(e));
+                    XElement numberField = new XElement("div",
+                                                new XAttribute("class", "col-sm-10"),
+                                                    new XElement("input",
+                                                        new XAttribute("type", "number"),
+                                                        new XAttribute("class", "form-control"),
+                                                        new XAttribute("id", e.Name.LocalName),
+                                                        new XAttribute("name", e.Name.LocalName),
+                                                        new XAttribute("placeholder", LabelString(e)),
+                                                        new XAttribute("value", (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText))
+                                                    )
+                                            );
+
+                    numberContainer.Add(numberLabel);
+                    numberContainer.Add(numberField);
+
+                    htmlField = numberContainer.ToString();
+
+                    break;
+
                 case "password":
+
+                    XElement passwordContainer = new XElement("div", new XAttribute("class", "form-group row"));
+                    XElement passwordLabel = new XElement("label", new XAttribute("for", e.Name.LocalName), new XAttribute("class", "col-sm-2 col-form-label"), LabelString(e));
+                    XElement passwordField = new XElement("div",
+                                                new XAttribute("class", "col-sm-10"),
+                                                    new XElement("input",
+                                                        new XAttribute("type", "password"),
+                                                        new XAttribute("class", "form-control"),
+                                                        new XAttribute("id", e.Name.LocalName),
+                                                        new XAttribute("name", e.Name.LocalName),
+                                                        new XAttribute("placeholder", "Password"),
+                                                        new XAttribute("value", (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText))
+                                                    )
+                                            );
+
+                    passwordContainer.Add(passwordLabel);
+                    passwordContainer.Add(passwordField);
+
+                    htmlField = passwordContainer.ToString();
+
+                    break;
+
                 case "text":
 
-                    htmlLabel = LabelString(e);
-
+                    XElement textContainer = new XElement("div", new XAttribute("class", "form-group row"));
+                    XElement textLabel = new XElement("label", new XAttribute("for", e.Name.LocalName), new XAttribute("class", "col-sm-2 col-form-label"), LabelString(e));
+                    XElement textField = null;
                     if (e.Attribute("multiLine") != null)
                     {
-                        XElement textarea = new XElement("textarea",
-                            (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText),
-                            new XAttribute("id", e.Name.LocalName),
-                            new XAttribute("name", e.Name.LocalName),
-                            new XAttribute("class", "form-control"),
-                            new XAttribute("style", "width: 100%;"),
-                            new XAttribute("aria-describedby", $"lbl{e.Name.LocalName}"),
-                            new XAttribute("title", $"XML Element Name: {e.Name.LocalName}"),
-                            new XAttribute("rows", "6")
+                        textField = new XElement("div",
+                            new XAttribute("class", "col-sm-10"),
+                            new XElement("textarea",
+                                new XAttribute("class", "form-control"),
+                                new XAttribute("id", e.Name.LocalName),
+                                new XAttribute("name", e.Name.LocalName),
+                                new XAttribute("placeholder", LabelString(e)),
+                                (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText)
+                            )
                         );
-
-                        htmlField = textarea.ToString();
-
                     }
                     else
                     {
-                        XElement input = new XElement("input",
-                            new XAttribute("id", e.Name.LocalName),
-                            new XAttribute("name", e.Name.LocalName),
-                            new XAttribute("type", GetUIType(e)),
-                            new XAttribute("class", "form-control"),
-                            new XAttribute("style", "width: 100%;"),
-                            new XAttribute("aria-describedby", $"lbl{e.Name.LocalName}"),
-                            new XAttribute("title", $"XML Element Name: {e.Name.LocalName}"),
-                            new XAttribute("value", (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText))
+                        textField = new XElement("div",
+                            new XAttribute("class", "col-sm-10"),
+                            new XElement("input",
+                                new XAttribute("type", GetUIType(e)),
+                                new XAttribute("class", "form-control"),
+                                new XAttribute("id", e.Name.LocalName),
+                                new XAttribute("name", e.Name.LocalName),
+                                new XAttribute("placeholder", LabelString(e)),
+                                new XAttribute("value", (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText))
+                            )
                         );
-
-                        htmlField = input.ToString();
-
                     }
 
-                    break;
+                    textContainer.Add(textLabel);
+                    textContainer.Add(textField);
 
-                #endregion
-
-                case "button":
-                    break;
-                case "checkbox":
-
-                    XElement checkbox =
-                        new XElement("label", new XAttribute("class", "custom-control custom-checkbox"),
-                            new XElement("input", new XAttribute("type", "checkbox"), new XAttribute("class", "custom-control-input")),
-                            new XElement("span", new XAttribute("class", "custom-control-indicator")),
-                            new XElement("span", new XAttribute("class", "custom-control-description"), (!String.IsNullOrEmpty(e.Value)) ? (e.Value) : (defaultText))
-                        );
-
-                    htmlField = checkbox.ToString();
+                    htmlField = textContainer.ToString();
 
                     break;
             }
