@@ -3,6 +3,7 @@
 <script src="~/Scripts/adobeforms.js"></script>
 
 <script type="text/javascript">
+    
     function LoadDynamicInputData() {
 
         var selectedText = $('#baseFormIdString').find("option:selected").attr("id");
@@ -19,6 +20,30 @@
             });
     }
 
+    function SendToServerEdit() {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost/AdobeForms.Web/api/AdobeForm/LoadForm",
+            data: $("#responseXML").text(),
+            contentType: "application/xml; charset=utf-8",
+            dataType: "xml",
+            error: function (jqXhr, textStatus, errorThrown) {
+                window.alert(textStatus);
+            },
+            success: function (data, textStatus, jqXhr) {
+                $("#responseXML").html(data.documentElement.outerHTML);
+            },
+            statusCode: {
+                200: function () {
+                    alert("yeah boy!");
+                },
+                404: function () {
+                    alert("page not found");
+                }
+            }
+        });
+    }
+
     function SendToServer() {
 
         var dataArray = [];
@@ -30,9 +55,22 @@
             type: "POST",
             url: "http://localhost/AdobeForms.Web/api/AdobeForm/SaveForm",
             data: JSON.stringify(dataArray),
-            success: function () { alert('Sent...'); },
             contentType: "application/json; charset=utf-8",
-            dataType: "json"
+            dataType: "xml",
+            error: function (jqXhr, textStatus, errorThrown) {
+                window.alert(textStatus);
+            },
+            success: function (data, textStatus, jqXhr) {
+                $("#responseXML").html(data.documentElement.outerHTML);
+            },
+            statusCode: {
+                200: function () {
+                    alert("yeah boy!");
+                },
+                404: function () {
+                    alert("page not found");
+                }
+            }
         });
 
     }
@@ -57,6 +95,12 @@
     <br />
 </div>
 <div class="panel panel-default">
-    <div id="result"></div>
+    <div class="row">
+        <div id="result" class="col-lg-6"></div>
+        <div id="response" class="col-lg-6">
+            <textarea id="responseXML" name="responseXML"></textarea>
+        </div>
+    </div>
     <button type="button" class="btn btn-lg btn-primary" onclick="SendToServer()">Save</button>
+    <button type="button" class="btn btn-lg btn-primary" onclick="SendToServerEdit()">Edit</button>
 </div>

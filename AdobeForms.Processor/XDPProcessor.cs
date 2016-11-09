@@ -20,7 +20,7 @@ namespace AdobeForms.Processor
             //        default namespcae for use in XPath queries
 
 
-            XElement customFormDataElement = new XElement(customFormData);
+            XElement customFormDataElement = new XElement(customFormData, new XAttribute("xdpFileName", SecurityElement.Escape(xdpFileName)), new XAttribute("datetime", DateTime.UtcNow.ToString("O")));
             XElement xdpElement = XElement.Load(xdpFileName);
             XElement template = xdpElement.Descendants().First(d => d.Name.LocalName.Equals("template"));
 
@@ -120,20 +120,20 @@ namespace AdobeForms.Processor
                             // dynamically generated forms
 
                             // See if there is a <speak> element
-                            XElement speak = assist.Descendants("speak").FirstOrDefault();
-
-                            // See if there is a <tooTip> element
-                            XElement toolTip = assist.Descendants("toolTip").FirstOrDefault();
+                            XElement speak = assist.XPathSelectElement("ns:speak", nsManager);
 
                             // Add these values as attributes
                             if (speak != null)
                             {
-                                leaf.Add(new XAttribute("speak", speak.Value));
+                                leaf.Add(new XAttribute("speak", SecurityElement.Escape(speak.Value)));
                             }
 
-                            if (assist.Descendants("toolTip").FirstOrDefault() != null)
+                            // See if there is a <tooTip> element
+                            XElement toolTip = assist.XPathSelectElement("ns:toolTip", nsManager);
+
+                            if (toolTip != null)
                             {
-                                leaf.Add(new XAttribute("toolTip", toolTip.Value));
+                                leaf.Add(new XAttribute("toolTip", SecurityElement.Escape(toolTip.Value)));
                             }
                         }
 
