@@ -9,16 +9,38 @@ namespace AdobeForms.Web.Services.Forms
     public class FormDataService
     {
 
+        private string GetConnectionString()
+        {
+            string connectionString = null;
+
+            System.Configuration.Configuration rootWebConfig = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/AdobeForms.Web");
+            if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count > 0)
+            {
+                var connString = rootWebConfig.ConnectionStrings.ConnectionStrings["Forms"];
+
+                connectionString = connString.ConnectionString;
+            }
+            else
+            {
+                SqlConnectionStringBuilder sqlConnectionStringBuilder = new SqlConnectionStringBuilder();
+                sqlConnectionStringBuilder.DataSource = "SVUSRYE-SQL3D1";
+                sqlConnectionStringBuilder.InitialCatalog = "Navigate_NPR";
+                sqlConnectionStringBuilder.IntegratedSecurity = true;
+
+                connectionString = sqlConnectionStringBuilder.ConnectionString;
+            }
+
+            return connectionString;
+
+        }
+
         public List<DataTypes.FormData> GetFormData()
         {
+            string connectionString = GetConnectionString();
+
             List<DataTypes.FormData> formData = new List<DataTypes.FormData>();
 
-            SqlConnectionStringBuilder sqlConnectionStringBuilder = new SqlConnectionStringBuilder();
-            sqlConnectionStringBuilder.DataSource = "SVUSRYE-SQL3D1";
-            sqlConnectionStringBuilder.InitialCatalog = "Navigate_NPR";
-            sqlConnectionStringBuilder.IntegratedSecurity = true;
-
-            using (SqlConnection sqlConnection = new SqlConnection(sqlConnectionStringBuilder.ConnectionString))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
 
                 sqlConnection.Open();

@@ -34,9 +34,6 @@
                 $("#result").html(data);
             },
             statusCode: {
-                200: function () {
-                    alert("yeah boy!");
-                },
                 404: function () {
                     alert("page not found");
                 }
@@ -61,12 +58,9 @@
                 window.alert(textStatus);
             },
             success: function (data, textStatus, jqXhr) {
-                $("#responseXML").html(data.documentElement.outerHTML);
+                $("#responseXML").html(jqXhr.responseText);
             },
             statusCode: {
-                200: function () {
-                    alert("yeah boy!");
-                },
                 404: function () {
                     alert("page not found");
                 }

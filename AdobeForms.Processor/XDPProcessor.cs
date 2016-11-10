@@ -17,7 +17,7 @@ namespace AdobeForms.Processor
             //        http://www.xfa.org/schema/xfa-template/X.Y/ where X.Y can be 2.5, 2.6, 2.8, 3.3 etc.
             //
             //        So we will find the <template> element using the LocalName (element name sans namespace) and get the 
-            //        default namespcae for use in XPath queries
+            //        default namespace for use in XPath queries
 
 
             XElement customFormDataElement = new XElement(customFormData, new XAttribute("xdpFileName", SecurityElement.Escape(xdpFileName)), new XAttribute("datetime", DateTime.UtcNow.ToString("O")));
@@ -49,32 +49,41 @@ namespace AdobeForms.Processor
 
                     // See if the field is required and grab the validation message
                     var validate = field.XPathSelectElement("ns:validate[@nullTest='error']", nsManager);
+
                     if (validate != null)
                     {
+                        // If the nullTest attribute is set to 'error' then the field is required
                         requiredField = true;
+
+                        // There may also be a message to display for the missing required field
                         var validateMessage = validate.XPathSelectElement("ns:message/ns:text[@name='nullTest']", nsManager);
+
                         if (validateMessage != null)
                         {
                             requiredFieldMessage = validateMessage.Value;
                         }
                     }
 
+                    // See if the field has a default value
                     var defaultValue = field.XPathSelectElement("ns:value/ns:text", nsManager);
+
                     if (defaultValue != null)
                     {
+
                         defaultValueText = SecurityElement.Escape(defaultValue.Value);
+
                     }
 
-                    // This will be the path in the forms XML that this control is bound to
+                    // This will be the path in the form's XML that this control is bound to
                     string refAttr = bind.Attribute("ref").Value;
 
-                    // Split path elements
+                    // Split the binding path into tokens
                     string[] tokens = refAttr.Split("$.".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                    // Find the CustomFormData or FormFillInData element in the bind path
+                    // Find the CustomFormData or FormFillInData element in the binding path
                     int i = Array.IndexOf(tokens, customFormData);
 
-                    // Create a destination array
+                    // Create a destination array with the path tokens to the right of the CustomFormData or FormFillInData element
                     string[] elements = tokens.Skip(i + 1).ToArray();
 
                     // Create the XML from the reconstructed path
@@ -90,7 +99,7 @@ namespace AdobeForms.Processor
                         leaf.Add(new XAttribute("name", fieldElementName));
                         leaf.Add(new XAttribute("datatype", uiControlType.Name.LocalName));
 
-                        // This will add attributes like multiline="1" to the <textEdit>
+                        // This will add all other attributes like multiline="1" to the <textEdit>
                         foreach (var a in uiControlType.Attributes())
                         {
 
@@ -111,13 +120,14 @@ namespace AdobeForms.Processor
 
                         #region Assist Values
 
+                        // We are using the <assist> and it's possible child elements to provide 
+                        // an unobtrusive way to specify alternative labels for fields on the 
+                        // dynamically generated forms
+
                         // If we have and <assist> element
                         if (assist != null)
                         {
 
-                            // We are using the <assist> and it's possible child elements to provide 
-                            // an unobtrusive way to specify alternative labels for fields on the 
-                            // dynamically generated forms
 
                             // See if there is a <speak> element
                             XElement speak = assist.XPathSelectElement("ns:speak", nsManager);
@@ -157,7 +167,8 @@ namespace AdobeForms.Processor
         }
 
         #region Helpers
-
+        
+        // Modified from this SO question:
         //http://stackoverflow.com/questions/508390/create-xml-nodes-based-on-xpath
 
         private static XElement MakeXPath(XElement parent, string xpath)
